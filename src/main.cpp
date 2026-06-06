@@ -7,6 +7,7 @@
 #include "soc/rtc_cntl_reg.h"
 
 #include "config.h"
+#include "capteurs.h"
 #include "deplacements.h"
 #include "encodeurs.h"
 #include "moteurs.h"
@@ -90,11 +91,16 @@ void gererCommande(String msg) {
   } else if (msg.startsWith("C:")) {
     sequenceCercle(msg.substring(2).toFloat());
   } else if (msg == "FINDN") {
-    etat = "NORD_MANUEL";
+    sequenceActive = true;
+    orienterVersNord();
+    sequenceActive = false;
+    stopMoteurs();
   } else if (msg == "S3") {
     sequenceFleche(12.0f);
   } else if (msg.startsWith("DRAW3:")) {
     sequenceFleche(msg.substring(6).toFloat());
+  } else if (msg.startsWith("ROSE3:")) {
+    sequenceRoseDesVents(msg.substring(6).toFloat());
   } else if (msg.startsWith("E:")) {
     String args = msg.substring(2);
     int p1 = args.indexOf(',');
@@ -170,6 +176,7 @@ void setup() {
 
   setupMoteurs();
   setupEncodeurs();
+  setupCapteurs();
 
   BLEDevice::init("DRAWBOT");
   pServer = BLEDevice::createServer();

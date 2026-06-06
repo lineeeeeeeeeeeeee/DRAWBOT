@@ -338,134 +338,99 @@ class DrawbotGUI:
         return frame
 
     def sequence_panel(self, parent):
-        frame = self.panel(parent, "Séquences", "Choisis une séquence du sujet puis lance le robot.", "04")
+        frame = self.panel(parent, "Séquences du projet", "Lance les trois figures demandées directement sur le robot.", "04")
         frame.columnconfigure((0, 1), weight=1)
 
-        self.make_button(frame, "Séquence 1 : l'escalier", self.lancer_s1, "primary", width=24).grid(
-            row=2, column=0, columnspan=2, sticky="ew", pady=(0, 16)
+        def sequence_block(row, numero, titre, description):
+            block = tk.Frame(frame, bg=self.colors["panel"], highlightthickness=1, highlightbackground=self.colors["border"], padx=20, pady=18)
+            block.grid(row=row, column=0, columnspan=2, sticky="ew", pady=(0, 18))
+            block.columnconfigure((0, 1), weight=1)
+
+            header = tk.Frame(block, bg=self.colors["panel"])
+            header.grid(row=0, column=0, columnspan=2, sticky="ew", pady=(0, 14))
+            header.columnconfigure(1, weight=1)
+
+            tk.Label(
+                header,
+                text=numero,
+                bg=self.colors["accent"],
+                fg="#031525",
+                font=("Arial", 12, "bold"),
+                padx=12,
+                pady=5,
+            ).grid(row=0, column=0, sticky="nw", padx=(0, 14))
+
+            tk.Label(
+                header,
+                text=titre,
+                bg=self.colors["panel"],
+                fg=self.colors["text"],
+                font=("Arial", 24, "bold"),
+                anchor="w",
+            ).grid(row=0, column=1, sticky="ew")
+
+            tk.Label(
+                header,
+                text=description,
+                bg=self.colors["panel"],
+                fg=self.colors["muted"],
+                font=("Arial", 11),
+                anchor="w",
+                justify="left",
+                wraplength=980,
+            ).grid(row=1, column=1, sticky="ew", pady=(4, 0))
+
+            return block
+
+        s1 = sequence_block(
+            2,
+            "01",
+            "Séquence 1 : Escalier",
+            "Ligne droite, virage à gauche, segment court, virage à droite, puis dernier segment.",
+        )
+        self.make_button(s1, "Dessiner l'escalier", self.lancer_s1, "primary", width=24).grid(
+            row=1, column=0, columnspan=2, sticky="ew"
         )
 
-        s2 = tk.Frame(frame, bg=self.colors["panel"])
-        s2.grid(row=3, column=0, columnspan=2, sticky="ew", pady=(0, 16))
-        s2.columnconfigure((0, 1), weight=1)
-
-        tk.Label(
-            s2,
-            text="Séquence 2 : le cercle",
-            bg=self.colors["panel"],
-            fg=self.colors["text"],
-            font=("Arial", 15, "bold"),
-        ).grid(row=0, column=0, columnspan=2, sticky="w", padx=8, pady=(0, 8))
-
-        tk.Label(s2, text="Rayon (cm)", bg=self.colors["panel"], fg=self.colors["muted"], font=("Arial", 10)).grid(
-            row=1, column=0, sticky="w", padx=8
+        s2 = sequence_block(
+            3,
+            "02",
+            "Séquence 2 : Cercle paramétrable",
+            "Choisis le rayon demandé par le sujet, puis lance le tracé du cercle sur le robot.",
+        )
+        tk.Label(s2, text="Rayon du cercle (cm)", bg=self.colors["panel"], fg=self.colors["muted"], font=("Arial", 10, "bold")).grid(
+            row=1, column=0, sticky="w", padx=(0, 12)
         )
         self.rayon_s2 = self.make_entry(s2, "10")
-        self.rayon_s2.grid(row=2, column=0, sticky="ew", padx=8, pady=(4, 0))
-
-        self.make_button(s2, "Voir simulation cercle", self.simuler_s2, "default").grid(
-            row=2, column=1, sticky="ew", padx=8, pady=(4, 0)
+        self.rayon_s2.grid(row=2, column=0, sticky="ew", padx=(0, 12), pady=(4, 0))
+        self.make_button(s2, "Dessiner le cercle", self.dessiner_s2, "success").grid(
+            row=2, column=1, sticky="ew", padx=(12, 0), pady=(4, 0)
         )
 
-        s3 = tk.Frame(frame, bg=self.colors["panel"])
-        s3.grid(row=4, column=0, columnspan=2, sticky="ew", pady=(0, 18))
-        s3.columnconfigure((0, 1), weight=1)
+        s3 = sequence_block(
+            4,
+            "03",
+            "Séquence 3 : Flèche Nord et rose des vents",
+            "Choisis les dimensions, puis lance la flèche orientée Nord ou la rose des vents sur le robot.",
+        )
+        s3.columnconfigure((0, 1, 2, 3), weight=1)
 
-        tk.Label(
-            s3,
-            text="Séquence 3 : la rose des vents",
-            bg=self.colors["panel"],
-            fg=self.colors["text"],
-            font=("Arial", 15, "bold"),
-        ).grid(row=0, column=0, columnspan=2, sticky="w", padx=8, pady=(0, 8))
-
-        tk.Label(s3, text="Longueur flèche (cm)", bg=self.colors["panel"], fg=self.colors["muted"], font=("Arial", 10)).grid(
-            row=1, column=0, sticky="w", padx=8
+        tk.Label(s3, text="Longueur flèche (cm)", bg=self.colors["panel"], fg=self.colors["muted"], font=("Arial", 10, "bold")).grid(
+            row=1, column=0, sticky="w", padx=(0, 10)
         )
         self.longueur_s3 = self.make_entry(s3, "12")
-        self.longueur_s3.grid(row=2, column=0, sticky="ew", padx=8, pady=(4, 0))
-
-        self.make_button(s3, "Dessiner la flèche Nord", self.dessiner_s3, "success").grid(
-            row=2, column=1, sticky="ew", padx=8, pady=(4, 0)
+        self.longueur_s3.grid(row=2, column=0, sticky="ew", padx=(0, 10), pady=(4, 16))
+        self.make_button(s3, "Dessiner flèche Nord", self.dessiner_s3, "success").grid(
+            row=2, column=1, columnspan=3, sticky="ew", padx=(10, 0), pady=(4, 16)
         )
 
-        self.advanced_toggle_btn = self.make_button(
-            frame,
-            "Afficher réglages avancés",
-            self.toggle_advanced_sequences,
-            "default",
-            width=24,
+        tk.Label(s3, text="Rayon rose (cm)", bg=self.colors["panel"], fg=self.colors["muted"], font=("Arial", 10, "bold")).grid(
+            row=3, column=0, sticky="w", padx=(0, 10)
         )
-        self.advanced_toggle_btn.grid(row=5, column=0, columnspan=2, sticky="ew", pady=(2, 0))
-
-        self.advanced_sequences_frame = tk.Frame(frame, bg=self.colors["panel"])
-        self.advanced_sequences_frame.grid(row=6, column=0, columnspan=2, sticky="ew", pady=(16, 0))
-        self.advanced_sequences_frame.columnconfigure((0, 1), weight=1)
-        self.advanced_sequences_frame.grid_remove()
-
-        s1 = tk.Frame(self.advanced_sequences_frame, bg=self.colors["panel"])
-        s1.grid(row=0, column=0, columnspan=2, sticky="ew", pady=(0, 14))
-        s1.columnconfigure((0, 1), weight=1)
-
-        tk.Label(s1, text="Correction rotation S1", bg=self.colors["panel"], fg=self.colors["muted"], font=("Arial", 10)).grid(
-            row=0, column=0, sticky="w", padx=8
-        )
-        self.krot_s1 = self.make_entry(s1, "0.45")
-        self.krot_s1.grid(row=1, column=0, sticky="ew", padx=8, pady=(4, 0))
-        self.make_button(s1, "Appliquer KROT", self.regler_rotation_s1).grid(
-            row=1, column=1, sticky="ew", padx=8, pady=(4, 0)
-        )
-
-        gains = tk.Frame(self.advanced_sequences_frame, bg=self.colors["panel"])
-        gains.grid(row=1, column=0, columnspan=2, sticky="ew", pady=(0, 14))
-        gains.columnconfigure((0, 1, 2, 3), weight=1)
-
-        tk.Label(gains, text="KP sync", bg=self.colors["panel"], fg=self.colors["muted"], font=("Arial", 10)).grid(
-            row=0, column=0, sticky="w", padx=8
-        )
-        self.kp_s1 = self.make_entry(gains, "2.0")
-        self.kp_s1.grid(row=1, column=0, sticky="ew", padx=8, pady=(4, 0))
-
-        tk.Label(gains, text="KD sync", bg=self.colors["panel"], fg=self.colors["muted"], font=("Arial", 10)).grid(
-            row=0, column=1, sticky="w", padx=8
-        )
-        self.kd_s1 = self.make_entry(gains, "0.8")
-        self.kd_s1.grid(row=1, column=1, sticky="ew", padx=8, pady=(4, 0))
-
-        tk.Label(gains, text="PWM avance", bg=self.colors["panel"], fg=self.colors["muted"], font=("Arial", 10)).grid(
-            row=0, column=2, sticky="w", padx=8
-        )
-        self.pwm_avance_s1 = self.make_entry(gains, "95")
-        self.pwm_avance_s1.grid(row=1, column=2, sticky="ew", padx=8, pady=(4, 0))
-
-        tk.Label(gains, text="PWM rotation", bg=self.colors["panel"], fg=self.colors["muted"], font=("Arial", 10)).grid(
-            row=0, column=3, sticky="w", padx=8
-        )
-        self.pwm_rot_s1 = self.make_entry(gains, "110")
-        self.pwm_rot_s1.grid(row=1, column=3, sticky="ew", padx=8, pady=(4, 0))
-
-        self.make_button(gains, "Appliquer gains S1", self.regler_gains_s1).grid(
-            row=2, column=0, columnspan=4, sticky="ew", padx=8, pady=(10, 0)
-        )
-
-        stylo = tk.Frame(self.advanced_sequences_frame, bg=self.colors["panel"])
-        stylo.grid(row=2, column=0, columnspan=2, sticky="ew")
-        stylo.columnconfigure((0, 1, 2), weight=1)
-
-        tk.Label(stylo, text="K stylo", bg=self.colors["panel"], fg=self.colors["muted"], font=("Arial", 10)).grid(
-            row=0, column=0, sticky="w", padx=8
-        )
-        self.kstylo_s1 = self.make_entry(stylo, "35")
-        self.kstylo_s1.grid(row=1, column=0, sticky="ew", padx=8, pady=(4, 0))
-
-        tk.Label(stylo, text="PWM stylo", bg=self.colors["panel"], fg=self.colors["muted"], font=("Arial", 10)).grid(
-            row=0, column=1, sticky="w", padx=8
-        )
-        self.pwm_stylo_s1 = self.make_entry(stylo, "65")
-        self.pwm_stylo_s1.grid(row=1, column=1, sticky="ew", padx=8, pady=(4, 0))
-
-        self.make_button(stylo, "Appliquer stylo", self.regler_stylo_s1).grid(
-            row=1, column=2, sticky="ew", padx=8, pady=(4, 0)
+        self.rayon_rose_s3 = self.make_entry(s3, "8")
+        self.rayon_rose_s3.grid(row=4, column=0, sticky="ew", padx=(0, 10), pady=(4, 0))
+        self.make_button(s3, "Dessiner rose", self.dessiner_rose_s3, "success").grid(
+            row=4, column=1, columnspan=3, sticky="ew", padx=(10, 0), pady=(4, 0)
         )
 
         return frame
@@ -506,11 +471,13 @@ class DrawbotGUI:
 
         controls = tk.Frame(frame, bg=self.colors["panel"])
         controls.grid(row=4, column=0, sticky="ew", pady=(12, 0))
-        controls.columnconfigure((0, 1, 2), weight=1)
+        controls.columnconfigure((0, 1, 2, 3, 4), weight=1)
 
         self.make_button(controls, "Simuler escalier", self.simuler_s1).grid(row=0, column=0, sticky="ew", padx=(0, 8))
-        self.make_button(controls, "Simuler flèche", self.simuler_s3).grid(row=0, column=1, sticky="ew", padx=8)
-        self.make_button(controls, "Effacer", self.clear_simulation, "danger").grid(row=0, column=2, sticky="ew", padx=(8, 0))
+        self.make_button(controls, "Simuler cercle", self.simuler_s2).grid(row=0, column=1, sticky="ew", padx=8)
+        self.make_button(controls, "Simuler flèche", self.simuler_s3).grid(row=0, column=2, sticky="ew", padx=8)
+        self.make_button(controls, "Simuler rose", self.simuler_rose_s3).grid(row=0, column=3, sticky="ew", padx=8)
+        self.make_button(controls, "Effacer", self.clear_simulation, "danger").grid(row=0, column=4, sticky="ew", padx=(8, 0))
 
         return frame
     def make_entry(self, parent, default_value):
@@ -652,6 +619,68 @@ class DrawbotGUI:
             self.simulate_stylus_controller(targets, allow_reverse=True, arrow_mode=True),
             [(0, 0), *targets],
             fixed_bounds=(-4.5, 4.5, 0.0, 18.0),
+        )
+        return True
+
+    def rose_des_vents_targets(self, rayon):
+        points = [(0.0, 0.0), (rayon, 0.0)]
+        total_cercle = 64
+        for i in range(1, total_cercle + 1):
+            angle = 2.0 * math.pi * i / total_cercle
+            points.append((rayon * math.cos(angle), rayon * math.sin(angle)))
+
+        points.append((0.0, 0.0))
+        for i in range(8):
+            angle = math.pi / 2.0 - i * math.pi / 4.0
+            longueur = rayon if i % 2 == 0 else rayon * 0.78
+            pointe = (longueur * math.cos(angle), longueur * math.sin(angle))
+            points.append(pointe)
+
+            if i == 0:
+                tete = max(0.8, rayon * 0.18)
+                demi_largeur = max(0.45, rayon * 0.08)
+                points.append((-demi_largeur, rayon - tete))
+                points.append(pointe)
+                points.append((demi_largeur, rayon - tete))
+                points.append(pointe)
+
+            points.append((0.0, 0.0))
+
+        return points
+
+    def densifier_trajet(self, points, pas=0.25):
+        if not points:
+            return []
+
+        dense = [points[0]]
+        for depart, arrivee in zip(points, points[1:]):
+            dx = arrivee[0] - depart[0]
+            dy = arrivee[1] - depart[1]
+            distance = math.hypot(dx, dy)
+            divisions = max(1, int(distance / pas))
+            for i in range(1, divisions + 1):
+                t = i / divisions
+                dense.append((depart[0] + dx * t, depart[1] + dy * t))
+
+        return dense
+
+    def simuler_rose_s3(self):
+        valeur = self.rayon_rose_s3.get().strip()
+        if not self.valeur_numerique_ok(valeur, "rayon rose"):
+            return False
+
+        rayon = float(valeur)
+        if rayon < 3 or rayon > 12:
+            messagebox.showwarning("Rayon invalide", "Le rayon de la rose doit être compris entre 3 cm et 12 cm.")
+            return False
+
+        targets = self.rose_des_vents_targets(rayon)
+        points = self.densifier_trajet(targets)
+        self.start_simulation(
+            "Séquence 3 : rose des vents",
+            points,
+            targets,
+            fixed_bounds=(-rayon - 1.0, rayon + 1.0, -rayon - 1.0, rayon + 1.0),
         )
         return True
 
@@ -1158,9 +1187,41 @@ class DrawbotGUI:
     def trouver_nord(self):
         self.envoyer("FINDN")
 
+    def dessiner_s2(self):
+        valeur = self.rayon_s2.get().strip()
+        if not self.valeur_numerique_ok(valeur, "rayon"):
+            return
+
+        rayon = float(valeur)
+        if rayon < 2 or rayon > 20:
+            messagebox.showwarning("Rayon invalide", "Le rayon du cercle doit être compris entre 2 cm et 20 cm.")
+            return
+
+        self.envoyer("C:" + valeur)
+
     def dessiner_s3(self):
-        if self.simuler_s3():
-            self.envoyer("DRAW3:" + self.longueur_s3.get().strip())
+        valeur = self.longueur_s3.get().strip()
+        if not self.valeur_numerique_ok(valeur, "longueur"):
+            return
+
+        longueur = float(valeur)
+        if longueur < 3.5 or longueur > 18:
+            messagebox.showwarning("Longueur invalide", "La longueur de la flèche doit être comprise entre 3,5 cm et 18 cm.")
+            return
+
+        self.envoyer("DRAW3:" + valeur)
+
+    def dessiner_rose_s3(self):
+        valeur = self.rayon_rose_s3.get().strip()
+        if not self.valeur_numerique_ok(valeur, "rayon rose"):
+            return
+
+        rayon = float(valeur)
+        if rayon < 3 or rayon > 12:
+            messagebox.showwarning("Rayon invalide", "Le rayon de la rose doit être compris entre 3 cm et 12 cm.")
+            return
+
+        self.envoyer("ROSE3:" + valeur)
 
     def lancer_s3(self):
         valeur = self.longueur_s3.get().strip()

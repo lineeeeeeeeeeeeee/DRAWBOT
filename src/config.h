@@ -10,6 +10,9 @@
 #define IN_2_G 16
 #define ENC_G_A 32
 #define ENC_D_A 27
+#define SDA_PIN 21
+#define SCL_PIN 22
+#define ADDR_MAG 0x1E
 
 const float TICKS_PAR_CM = 34.5f;
 const float ENTRAXE_CM = 14.0f;
